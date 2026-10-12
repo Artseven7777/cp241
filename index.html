@@ -1,0 +1,1751 @@
+<title>📚 BookShelf Sorting Challenge</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+rel="stylesheet"
+href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap">
+
+<style>
+
+:root{
+    --bg1:#071330;
+    --bg2:#0f172a;
+    --card:#1e293bcc;
+    --gold:#ffd166;
+    --silver:#c0c0c0;
+    --bronze:#cd7f32;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Kanit',sans-serif;
+}
+
+body{
+    min-height:100vh;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--bg1),
+        var(--bg2),
+        #1e293b
+    );
+
+    color:white;
+}
+
+.hidden{
+    display:none !important;
+}
+
+.screen{
+    width:100%;
+    max-width:1300px;
+    margin:auto;
+    padding:30px;
+}
+
+.main-title{
+    text-align:center;
+    font-size:48px;
+    font-weight:700;
+
+    background:
+    linear-gradient(
+        90deg,
+        #ffd166,
+        #ff9f1c
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    margin-bottom:15px;
+}
+
+.sub-title{
+    text-align:center;
+    opacity:.9;
+    margin-bottom:25px;
+}
+
+.card{
+    background:var(--card);
+
+    backdrop-filter:blur(10px);
+
+    border-radius:24px;
+
+    border:1px solid
+    rgba(255,255,255,.1);
+
+    padding:25px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.3);
+
+    margin-top:20px;
+}
+
+.center{
+    text-align:center;
+}
+
+.btn{
+
+    border:none;
+
+    border-radius:14px;
+
+    padding:12px 24px;
+
+    color:white;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    margin:5px;
+}
+
+.btn:hover{
+
+    transform:
+    translateY(-3px);
+
+}
+
+.green{
+    background:#22c55e;
+}
+
+.blue{
+    background:#3b82f6;
+}
+
+.red{
+    background:#ef4444;
+}
+
+.orange{
+    background:#f97316;
+}
+
+select{
+
+    padding:12px;
+
+    border-radius:12px;
+
+    font-size:16px;
+}
+
+.rules{
+
+    background:
+    rgba(255,255,255,.05);
+
+    border-radius:18px;
+
+    padding:25px;
+
+    margin-top:20px;
+}
+
+.rules h3{
+    margin-bottom:15px;
+    text-align:center;
+}
+
+.rules ul{
+    padding-left:25px;
+}
+
+.rules li{
+    margin:10px 0;
+}
+
+.stats{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+    margin-top:20px;
+}
+
+.stat{
+
+    background:
+    rgba(255,255,255,.08);
+
+    padding:12px 20px;
+
+    border-radius:14px;
+
+    min-width:120px;
+
+    text-align:center;
+}
+
+.bookshelf{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:flex-end;
+
+    gap:10px;
+
+    margin-top:30px;
+
+    flex-wrap:wrap;
+}
+
+.book{
+
+    width:75px;
+
+    height:180px;
+
+    border-radius:
+    12px 12px 5px 5px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:28px;
+
+    font-weight:bold;
+
+    color:white;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.3);
+
+    border-bottom:
+    6px solid rgba(0,0,0,.25);
+}
+
+.book:hover{
+
+    transform:
+    translateY(-12px);
+}
+
+.selected{
+
+    outline:4px solid yellow;
+}
+
+.algo-box{
+
+    margin-top:15px;
+
+    background:
+    rgba(59,130,246,.15);
+
+    padding:15px;
+
+    border-radius:12px;
+}
+
+.result-medal{
+
+    font-size:90px;
+
+    margin:20px 0;
+}
+
+#aiShelf .book{
+
+    cursor:default;
+}
+
+@media(max-width:768px){
+
+    .main-title{
+        font-size:34px;
+    }
+
+    .book{
+        width:60px;
+        height:140px;
+        font-size:22px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- MENU -->
+
+<div id="menuScreen" class="screen">
+
+<h1 class="main-title">
+📚 BookShelf Sorting Challenge
+</h1>
+
+<p class="sub-title">
+เรียงหนังสือด้วยแนวคิด Sorting Algorithm
+เพื่อทำคะแนนและแข่งกับ AI
+</p>
+
+<div class="card center">
+
+<h2>เลือกโหมด</h2>
+
+<br>
+
+<button
+class="btn green"
+onclick="showScreen('timeScreen')">
+
+⏱ Time Attack
+
+</button>
+
+<button
+class="btn blue"
+onclick="showScreen('raceScreen')">
+
+🤖 Race VS AI
+
+</button>
+
+</div>
+
+</div>
+
+<!-- TIME ATTACK -->
+
+<div id="timeScreen"
+class="screen hidden">
+
+<h2 class="center">
+⏱ Time Attack
+</h2>
+
+<div class="card center">
+
+<select id="timeAlgorithm">
+
+<option value="bubble">
+Bubble Sort
+</option>
+
+<option value="selection">
+Selection Sort
+</option>
+
+</select>
+
+<button
+class="btn green"
+onclick="startTimeGame()">
+
+เริ่มเกม
+
+</button>
+
+<button
+class="btn red"
+onclick="backMenu()">
+
+กลับเมนู
+
+</button>
+
+<div
+class="algo-box"
+id="algoDescription">
+
+Bubble Sort:
+สลับได้เฉพาะหนังสือที่อยู่ติดกัน
+
+</div>
+
+</div>
+<div class="rules">
+
+<h3>📖 กติกา Time Attack</h3>
+
+<ul>
+
+<li>
+เรียงหนังสือจากน้อยไปมาก
+</li>
+
+<li>
+🏆 คะแนนเริ่มต้น 1000 คะแนน
+</li>
+
+<li>
+⏱ หัก 1 คะแนน ทุก 1 วินาที
+</li>
+
+<li>
+🔄 หัก 5 คะแนน ทุกการสลับ
+</li>
+
+<li>
+🥇 Gold : จบภายใน 20 วินาที
+</li>
+
+<li>
+🥈 Silver : จบภายใน 40 วินาที
+</li>
+
+<li>
+🥉 Bronze : เกิน 40 วินาที
+</li>
+
+</ul>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+⏱<br>
+<span id="timeTimer">
+0
+</span>
+</div>
+
+<div class="stat">
+🔄<br>
+<span id="timeMoves">
+0
+</span>
+</div>
+
+<div class="stat">
+🏆<br>
+<span id="timeScore">
+1000
+</span>
+</div>
+
+</div>
+
+<div
+id="timeShelf"
+class="bookshelf">
+</div>
+
+</div>
+
+<!-- RACE VS AI -->
+
+<div
+id="raceScreen"
+class="screen hidden">
+
+<h2 class="center">
+🤖 Race VS AI
+</h2>
+
+<div class="card center">
+
+<select id="difficulty">
+
+<option value="easy">
+Easy
+</option>
+
+<option value="medium">
+Medium
+</option>
+
+<option value="hard">
+Hard
+</option>
+
+</select>
+
+<button
+class="btn blue"
+onclick="startRaceGame()">
+
+เริ่มการแข่งขัน
+
+</button>
+
+<button
+class="btn red"
+onclick="backMenu()">
+
+กลับเมนู
+
+</button>
+
+<div class="algo-box">
+
+✅ Easy
+: Bubble Sort (700ms)
+
+<br><br>
+
+✅ Medium
+: Selection Sort (350ms)
+
+<br><br>
+
+✅ Hard
+: Bubble Sort (100ms)
+
+</div>
+
+</div>
+
+<div class="rules">
+
+<h3>
+📖 กติกา Race VS AI
+</h3>
+
+<ul>
+
+<li>
+เรียงหนังสือจากน้อยไปมาก
+</li>
+
+<li>
+แข่งกับ AI ที่ใช้ Sorting Algorithm จริง
+</li>
+
+<li>
+ใครเรียงเสร็จก่อนเป็นผู้ชนะ
+</li>
+
+<li>
+จำนวน Move ยิ่งน้อยยิ่งได้คะแนนสูง
+</li>
+
+<li>
+Hard จะมีหนังสือ 12 เล่ม
+</li>
+
+</ul>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+⏱<br>
+<span id="raceTimer">
+0
+</span>
+</div>
+
+<div class="stat">
+🔄<br>
+<span id="raceMoves">
+0
+</span>
+</div>
+
+<div class="stat">
+🏆<br>
+<span id="raceScore">
+0
+</span>
+</div>
+
+</div>
+
+<div class="card">
+
+<h3 class="center">
+👤 ผู้เล่น
+</h3>
+
+<div
+id="playerShelf"
+class="bookshelf">
+</div>
+
+</div>
+
+<div class="card">
+
+<h3 class="center">
+🤖 AI
+</h3>
+
+<div
+id="aiShelf"
+class="bookshelf">
+</div>
+
+</div>
+
+</div>
+
+<!-- RESULT SCREEN -->
+
+<div
+id="resultScreen"
+class="screen hidden">
+
+<div class="card center">
+
+<div
+id="resultMedal"
+class="result-medal">
+
+🏆
+
+</div>
+
+<h2 id="resultTitle">
+Game Result
+</h2>
+
+<p
+id="resultText"
+style="
+font-size:20px;
+line-height:2;">
+</p>
+
+<br>
+
+<h3>
+
+📈 High Score :
+<span id="highScoreValue">
+
+0
+
+</span>
+
+</h3>
+
+<br>
+
+<button
+class="btn green"
+onclick="restartGame()">
+
+🔄 เล่นอีกครั้ง
+
+</button>
+
+<button
+class="btn red"
+onclick="backMenu()">
+
+🏠 กลับเมนู
+
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const COLORS=[
+
+"#ef4444",
+"#f97316",
+"#eab308",
+"#22c55e",
+"#14b8a6",
+"#06b6d4",
+"#3b82f6",
+"#6366f1",
+"#8b5cf6",
+"#d946ef",
+"#ec4899",
+"#f43f5e"
+
+];
+
+let currentMode="";
+
+let selectedIndex=null;
+
+let gameArray=[];
+
+let playerArray=[];
+
+let aiArray=[];
+
+let gameSeconds=0;
+
+let timeMoves=0;
+
+let raceMoves=0;
+
+let gameTimer=null;
+
+let aiInterval=null;
+
+let playerFinished=false;
+
+let aiFinished=false;
+
+function showScreen(id){
+
+document
+.querySelectorAll(".screen")
+.forEach(screen=>{
+
+screen.classList.add("hidden");
+
+});
+
+document
+.getElementById(id)
+.classList.remove("hidden");
+
+}
+
+function backMenu(){
+
+clearInterval(gameTimer);
+clearInterval(aiInterval);
+
+showScreen("menuScreen");
+
+}
+
+function generateBooks(size){
+
+let arr=[];
+
+for(let i=1;i<=size;i++){
+
+arr.push(i);
+
+}
+
+for(let i=arr.length-1;i>0;i--){
+
+let j=Math.floor(
+Math.random()*(i+1)
+);
+
+[arr[i],arr[j]]
+=
+[arr[j],arr[i]];
+
+}
+
+return arr;
+
+}
+
+function isSorted(arr){
+
+for(
+let i=0;
+i<arr.length-1;
+i++
+){
+
+if(arr[i] > arr[i+1]){
+
+return false;
+
+}
+
+}
+
+return true;
+
+}
+
+function getHighScore(){
+
+return Number(
+
+localStorage.getItem(
+"bookshelf_highscore"
+) || 0
+
+);
+
+}
+
+function saveHighScore(score){
+
+let highScore=
+getHighScore();
+
+if(score > highScore){
+
+localStorage.setItem(
+"bookshelf_highscore",
+score
+);
+
+}
+
+}
+
+function updateAlgorithmDescription(){
+
+let type=
+document.getElementById(
+"timeAlgorithm"
+).value;
+
+const box=
+document.getElementById(
+"algoDescription"
+);
+
+if(type==="bubble"){
+
+box.innerHTML=`
+
+<b>Bubble Sort</b><br><br>
+
+ผู้เล่นสามารถสลับได้
+เฉพาะหนังสือที่อยู่ติดกันเท่านั้น
+
+<br><br>
+
+เช่น
+
+1 ↔ 2
+
+หรือ
+
+5 ↔ 6
+
+`;
+
+}
+else{
+
+box.innerHTML=`
+
+<b>Selection Sort</b><br><br>
+
+ผู้เล่นสามารถเลือก
+หนังสือเล่มใดก็ได้
+แล้วสลับตำแหน่งกัน
+
+<br><br>
+
+เช่น
+
+1 ↔ 8
+
+หรือ
+
+2 ↔ 7
+
+`;
+
+}
+
+}
+
+function calculateTimeScore(){
+
+return Math.max(
+
+0,
+
+1000
+-
+gameSeconds
+-
+(timeMoves*5)
+
+);
+
+}
+
+function calculateRaceScore(){
+
+return Math.max(
+
+0,
+
+2000
+-
+gameSeconds
+-
+(raceMoves*5)
+
+);
+
+}
+
+function renderTimeBooks(){
+
+const shelf=
+document.getElementById(
+"timeShelf"
+);
+
+shelf.innerHTML="";
+
+gameArray.forEach((num,index)=>{
+
+const book=
+document.createElement("div");
+
+book.className="book";
+
+book.style.background=
+COLORS[
+(num-1)
+%
+COLORS.length
+];
+
+book.textContent=num;
+
+if(
+selectedIndex===
+index
+){
+
+book.classList.add(
+"selected"
+);
+
+}
+
+book.onclick=
+()=>selectTimeBook(index);
+
+shelf.appendChild(book);
+
+});
+
+}
+
+function renderPlayerBooks(){
+
+const shelf=
+document.getElementById(
+"playerShelf"
+);
+
+shelf.innerHTML="";
+
+playerArray.forEach((num,index)=>{
+
+const book=
+document.createElement("div");
+
+book.className="book";
+
+book.style.background=
+COLORS[
+(num-1)
+%
+COLORS.length
+];
+
+book.textContent=num;
+
+if(
+selectedIndex===
+index
+){
+
+book.classList.add(
+"selected"
+);
+
+}
+
+book.onclick=
+()=>selectRaceBook(index);
+
+shelf.appendChild(book);
+
+});
+
+}
+
+function renderAIBooks(){
+
+const shelf=
+document.getElementById(
+"aiShelf"
+);
+
+shelf.innerHTML="";
+
+aiArray.forEach(num=>{
+
+const book=
+document.createElement("div");
+
+book.className="book";
+
+book.style.background=
+"#ef4444";
+
+book.textContent=num;
+
+shelf.appendChild(book);
+
+});
+
+}
+
+function updateTimeUI(){
+
+document.getElementById(
+"timeMoves"
+).textContent=
+timeMoves;
+
+document.getElementById(
+"timeScore"
+).textContent=
+calculateTimeScore();
+
+}
+
+function updateRaceUI(){
+
+document.getElementById(
+"raceMoves"
+).textContent=
+raceMoves;
+
+document.getElementById(
+"raceScore"
+).textContent=
+calculateRaceScore();
+
+}
+
+document
+.getElementById(
+"timeAlgorithm"
+)
+.addEventListener(
+"change",
+updateAlgorithmDescription
+);
+
+updateAlgorithmDescription();
+
+/* =========================
+   TIME ATTACK MODE
+========================= */
+
+function selectTimeBook(index){
+
+let algorithm =
+document.getElementById(
+"timeAlgorithm"
+).value;
+
+/* เลือกเล่มแรก */
+
+if(selectedIndex===null){
+
+selectedIndex=index;
+
+renderTimeBooks();
+
+return;
+
+}
+
+/* คลิกเล่มเดิม */
+
+if(selectedIndex===index){
+
+selectedIndex=null;
+
+renderTimeBooks();
+
+return;
+
+}
+
+/*
+Bubble Sort Mode
+
+สลับได้เฉพาะ
+หนังสือที่อยู่ติดกัน
+
+เช่น
+2 ↔ 3
+*/
+
+if(
+algorithm==="bubble"
+){
+
+if(
+Math.abs(
+selectedIndex-index
+)!==1
+){
+
+alert(
+"Bubble Sort: สลับได้เฉพาะหนังสือที่อยู่ติดกันเท่านั้น"
+);
+
+selectedIndex=null;
+
+renderTimeBooks();
+
+return;
+
+}
+
+}
+
+/*
+Selection Sort Mode
+
+สลับได้ทุกตำแหน่ง
+
+เช่น
+1 ↔ 8
+*/
+
+[
+gameArray[selectedIndex],
+gameArray[index]
+]
+=
+[
+gameArray[index],
+gameArray[selectedIndex]
+];
+
+timeMoves++;
+
+selectedIndex=null;
+
+renderTimeBooks();
+
+updateTimeUI();
+
+if(
+isSorted(gameArray)
+){
+
+finishTimeGame();
+
+}
+
+}
+
+function startTimeGame(){
+
+currentMode="time";
+
+selectedIndex=null;
+
+timeMoves=0;
+
+gameSeconds=0;
+
+gameArray=
+generateBooks(8);
+
+renderTimeBooks();
+
+updateTimeUI();
+
+document.getElementById(
+"timeTimer"
+).textContent=0;
+
+clearInterval(gameTimer);
+
+gameTimer=
+setInterval(()=>{
+
+gameSeconds++;
+
+document.getElementById(
+"timeTimer"
+).textContent=
+gameSeconds;
+
+updateTimeUI();
+
+},1000);
+
+}
+
+function finishTimeGame(){
+
+clearInterval(gameTimer);
+
+let score=
+calculateTimeScore();
+
+let medal="🥉";
+
+let medalText=
+"Bronze";
+
+if(
+gameSeconds<=20
+){
+
+medal="🥇";
+
+medalText=
+"Gold";
+
+}
+else if(
+gameSeconds<=40
+){
+
+medal="🥈";
+
+medalText=
+"Silver";
+
+}
+
+showResult(
+
+"⏱ Time Attack Complete",
+
+medal,
+
+`
+คะแนนสุดท้าย :
+<b>${score}</b>
+
+<br><br>
+
+เวลา :
+<b>
+${gameSeconds}
+วินาที
+</b>
+
+<br>
+
+จำนวน Move :
+<b>
+${timeMoves}
+</b>
+
+<br><br>
+
+ระดับรางวัล :
+
+<b>
+${medalText}
+</b>
+
+`,
+
+score
+
+);
+
+}
+/* =========================
+   BUBBLE SORT
+========================= */
+
+/*
+Bubble Sort
+
+เปรียบเทียบสมาชิกที่อยู่ติดกัน
+ถ้าค่าซ้ายมากกว่าค่าขวา
+ให้สลับตำแหน่ง
+
+Time Complexity
+O(n²)
+*/
+
+function bubbleSortSteps(arr){
+
+let a=[...arr];
+
+let steps=[];
+
+for(let i=0;i<a.length-1;i++){
+
+for(let j=0;j<a.length-i-1;j++){
+
+if(a[j] > a[j+1]){
+
+[a[j],a[j+1]]
+=
+[a[j+1],a[j]];
+
+steps.push([...a]);
+
+}
+
+}
+
+}
+
+return steps;
+
+}
+
+/* =========================
+   SELECTION SORT
+========================= */
+
+/*
+Selection Sort
+
+หาเลขที่น้อยที่สุด
+ในส่วนที่ยังไม่เรียง
+
+แล้วนำมาสลับ
+ไว้ด้านหน้า
+
+Time Complexity
+O(n²)
+*/
+
+function selectionSortSteps(arr){
+
+let a=[...arr];
+
+let steps=[];
+
+for(let i=0;i<a.length-1;i++){
+
+let min=i;
+
+for(
+let j=i+1;
+j<a.length;
+j++
+){
+
+if(a[j] < a[min]){
+
+min=j;
+
+}
+
+}
+
+if(min!==i){
+
+[a[i],a[min]]
+=
+[a[min],a[i]];
+
+steps.push([...a]);
+
+}
+
+}
+
+return steps;
+
+}
+
+/* =========================
+   RACE VS AI
+========================= */
+
+function selectRaceBook(index){
+
+if(playerFinished){
+
+return;
+
+}
+
+if(selectedIndex===null){
+
+selectedIndex=index;
+
+renderPlayerBooks();
+
+return;
+
+}
+
+if(selectedIndex===index){
+
+selectedIndex=null;
+
+renderPlayerBooks();
+
+return;
+
+}
+
+[
+playerArray[selectedIndex],
+playerArray[index]
+]
+=
+[
+playerArray[index],
+playerArray[selectedIndex]
+];
+
+raceMoves++;
+
+selectedIndex=null;
+
+renderPlayerBooks();
+
+updateRaceUI();
+
+if(
+isSorted(playerArray)
+){
+
+playerFinished=true;
+
+clearInterval(aiInterval);
+clearInterval(gameTimer);
+
+let score=
+calculateRaceScore();
+
+showResult(
+
+"🏆 YOU WIN",
+
+"🏆",
+
+`
+คุณเรียงหนังสือเสร็จก่อน AI
+
+<br><br>
+
+เวลา :
+
+<b>
+${gameSeconds}
+วินาที
+</b>
+
+<br>
+
+Moves :
+
+<b>
+${raceMoves}
+</b>
+
+<br>
+
+คะแนน :
+
+<b>
+${score}
+</b>
+
+`,
+
+score
+
+);
+
+}
+
+}
+
+function startRaceGame(){
+
+currentMode="race";
+
+selectedIndex=null;
+
+playerFinished=false;
+aiFinished=false;
+
+raceMoves=0;
+
+gameSeconds=0;
+
+let difficulty=
+document.getElementById(
+"difficulty"
+).value;
+
+let size=8;
+
+if(
+difficulty==="hard"
+){
+
+size=12;
+
+}
+
+playerArray=
+generateBooks(size);
+
+aiArray=
+[...playerArray];
+
+renderPlayerBooks();
+renderAIBooks();
+
+updateRaceUI();
+
+document.getElementById(
+"raceTimer"
+).textContent=0;
+
+clearInterval(gameTimer);
+
+gameTimer=
+setInterval(()=>{
+
+gameSeconds++;
+
+document.getElementById(
+"raceTimer"
+).textContent=
+gameSeconds;
+
+updateRaceUI();
+
+},1000);
+
+let steps=[];
+
+let speed=700;
+
+if(
+difficulty==="easy"
+){
+
+steps=
+bubbleSortSteps(aiArray);
+
+speed=700;
+
+}
+else if(
+difficulty==="medium"
+){
+
+steps=
+selectionSortSteps(aiArray);
+
+speed=350;
+
+}
+else{
+
+steps=
+bubbleSortSteps(aiArray);
+
+speed=100;
+
+}
+
+let currentStep=0;
+
+clearInterval(aiInterval);
+
+aiInterval=
+setInterval(()=>{
+
+if(
+currentStep >= steps.length
+){
+
+clearInterval(aiInterval);
+
+aiFinished=true;
+
+if(
+!playerFinished
+){
+
+clearInterval(gameTimer);
+
+showResult(
+
+"🤖 AI WIN",
+
+"🤖",
+
+`
+AI เรียงหนังสือเสร็จก่อน
+
+<br><br>
+
+เวลาที่ใช้
+
+<b>
+
+${gameSeconds}
+
+วินาที
+
+</b>
+
+`,
+
+0
+
+);
+
+}
+
+return;
+
+}
+
+aiArray=
+[
+...steps[currentStep]
+];
+
+renderAIBooks();
+
+currentStep++;
+
+},speed);
+
+}
+/* =========================
+   RESULT SYSTEM
+========================= */
+
+function showResult(
+title,
+medal,
+message,
+score
+){
+
+saveHighScore(score);
+
+document.getElementById(
+"resultTitle"
+).innerHTML=
+title;
+
+document.getElementById(
+"resultMedal"
+).innerHTML=
+medal;
+
+document.getElementById(
+"resultText"
+).innerHTML=
+message;
+
+document.getElementById(
+"highScoreValue"
+).textContent=
+getHighScore();
+
+showScreen(
+"resultScreen"
+);
+
+}
+
+function restartGame(){
+
+if(
+currentMode==="time"
+){
+
+showScreen(
+"timeScreen"
+);
+
+startTimeGame();
+
+return;
+
+}
+
+if(
+currentMode==="race"
+){
+
+showScreen(
+"raceScreen"
+);
+
+startRaceGame();
+
+return;
+
+}
+
+}
+
+/* =========================
+   INITIALIZE
+========================= */
+
+window.onload=()=>{
+
+document.getElementById(
+"highScoreValue"
+).textContent=
+getHighScore();
+
+updateAlgorithmDescription();
+
+};
+
+/* =========================
+   CLEANUP
+========================= */
+
+window.addEventListener(
+"beforeunload",
+()=>{
+
+clearInterval(
+gameTimer
+);
+
+clearInterval(
+aiInterval
+);
+
+}
+);
+
+</script>
+
+</body>
+</html>
