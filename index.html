@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorting Master Arena</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,sans-serif;
+}
+
+body{
+background:#121212;
+color:white;
+padding:20px;
+text-align:center;
+}
+
+h1{
+color:#4CAF50;
+margin-bottom:20px;
+}
+
+.menu button,
+.actionBtn{
+background:#4CAF50;
+color:white;
+border:none;
+padding:12px 20px;
+margin:5px;
+border-radius:10px;
+cursor:pointer;
+font-size:16px;
+}
+
+.panel{
+max-width:1000px;
+margin:auto;
+border:1px solid #444;
+padding:20px;
+border-radius:15px;
+margin-top:20px;
+}
+
+.array{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:10px;
+margin:20px;
+}
+
+.box{
+width:65px;
+height:65px;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#2196F3;
+border-radius:10px;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+transition:all .2s;
+}
+
+.box:hover{
+transform:scale(1.05);
+}
+
+.selected{
+background:orange;
+transform:scale(1.1);
+}
+
+.ai{
+background:#9C27B0;
+}
+
+.stats{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-bottom:15px;
+}
+
+.card{
+background:#222;
+padding:10px 15px;
+border-radius:10px;
+}
+
+.win{
+color:lime;
+}
+
+.lose{
+color:#ff5252;
+}
+
+.gold{
+color:gold;
+}
+
+.silver{
+color:silver;
+}
+
+.bronze{
+color:#cd7f32;
+}
+</style>
+</head>
+<body>
+
+<h1>🎮 Sorting Master Arena</h1>
+
+<div class="menu">
+<button onclick="startSpeedSort()">⏱ Speed Sort</button>
+<button onclick="startRace()">🤖 Race Against AI</button>
+<button onclick="startChoose()">🧠 Choose Algorithm</button>
+</div>
+
+<div id="game"></div>
+
+<script>
+
+let highScore =
+parseInt(localStorage.getItem("sortingHighScore")) || 0;
+
+function randomArray(size=8){
+
+let arr=[];
+
+while(arr.length<size){
+
+let n=Math.floor(Math.random()*90)+10;
+
+if(!arr.includes(n)){
+arr.push(n);
+}
+
+}
+
+return arr;
+}
+
+function isSorted(arr){
+
+for(let i=0;i<arr.length-1;i++){
+
+if(arr[i]>arr[i+1]){
+return false;
+}
+
+}
+
+return true;
+}
+
+function renderArray(id,data,handler=null,selected=[]){
+
+const el=document.getElementById(id);
+
+el.innerHTML="";
+
+data.forEach((num,index)=>{
+
+const div=document.createElement("div");
+
+div.className="box";
+
+if(selected.includes(index)){
+div.classList.add("selected");
+}
+
+div.innerText=num;
+
+if(handler){
+div.onclick=()=>handler(index);
+}
+
+el.appendChild(div);
+
+});
+
+}
+
+/* =======================================
+BUBBLE SORT
+เปรียบเทียบสมาชิกที่อยู่ติดกัน
+และสลับเมื่อค่าซ้ายมากกว่าค่าขวา
+======================================= */
+
+function bubbleSteps(arr){
+
+let a=[...arr];
+let steps=[];
+
+for(let i=0;i<a.length-1;i++){
+
+for(let j=0;j<a.length-i-1;j++){
+
+if(a[j]>a[j+1]){
+
+[a[j],a[j+1]]
+=
+[a[j+1],a[j]];
+
+steps.push([...a]);
+
+}
+
+}
+
+}
+
+return steps;
+}
+
+/* =======================================
+SELECTION SORT
+เลือกค่าที่น้อยที่สุด
+แล้วนำมาไว้ตำแหน่งด้านหน้า
+======================================= */
+
+function selectionSteps(arr){
+
+let a=[...arr];
+let steps=[];
+
+for(let i=0;i<a.length-1;i++){
+
+let min=i;
+
+for(let j=i+1;j<a.length;j++){
+
+if(a[j]<a[min]){
+
+min=j;
+
+}
+
+}
+
+if(min!==i){
+
+[a[i],a[min]]
+=
+[a[min],a[i]];
+
+steps.push([...a]);
+
+}
+
+}
+
+return steps;
+}
+
+/* ===========================
+MODE 1
+=========================== */
+
+let speedTimer;
+
+function startSpeedSort(){
+
+clearInterval(speedTimer);
+
+let arr=randomArray();
+let selected=[];
+let moves=0;
+let time=0;
+let finished=false;
+
+document.getElementById("game").innerHTML=`
+
+<div class="panel">
+
+<h2>⏱ Speed Sort</h2>
+
+<div class="stats">
+
+<div class="card">
+Time: <span id="time">0</span>s
+</div>
+
+<div class="card">
+Moves: <span id="moves">0</span>
+</div>
+
+<div class="card">
+High Score: ${highScore}
+</div>
+
+</div>
+
+<div id="speedArray" class="array"></div>
+
+<div id="result"></div>
+
+<button class="actionBtn" onclick="startSpeedSort()">
+Restart
+</button>
+
+</div>
+`;
+
+speedTimer=setInterval(()=>{
+
+if(!finished){
+
+time++;
+document.getElementById("time").innerText=time;
+
+}
+
+},1000);
+
+function clickBox(index){
+
+if(finished) return;
+
+selected.push(index);
+
+if(selected.length===2){
+
+let a=selected[0];
+let b=selected[1];
+
+[arr[a],arr[b]]
+=
+[arr[b],arr[a]];
+
+moves++;
+
+document.getElementById("moves").innerText=moves;
+
+selected=[];
+
+draw();
+
+if(isSorted(arr)){
+
+finished=true;
+
+clearInterval(speedTimer);
+
+let score=Math.max(1000-(time*10+moves*5),0);
+
+if(score>highScore){
+
+highScore=score;
+
+localStorage.setItem(
+"sortingHighScore",
+highScore
+);
+
+}
+
+let rank="Bronze";
+let cls="bronze";
+
+if(time<15){
+rank="Gold";
+cls="gold";
+}
+else if(time<30){
+rank="Silver";
+cls="silver";
+}
+
+document.getElementById("result").innerHTML=`
+
+<h2 class="win">
+🏆 Completed
+</h2>
+
+<h3>Score: ${score}</h3>
+
+<h3 class="${cls}">
+${rank}
+</h3>
+
+<p>Time: ${time}s</p>
+<p>Moves: ${moves}</p>
+
+`;
+
+}
+
+}else{
+draw();
+}
+
+}
+
+function draw(){
+
+renderArray(
+"speedArray",
+arr,
+clickBox,
+selected
+);
+
+}
+
+draw();
+}
+
+/* ===========================
+MODE 2
+=========================== */
+
+function startRace(){
+
+let player=randomArray();
+let ai=[...player];
+
+let selected=[];
+
+let algo=Math.random()<0.5
+?
+"Bubble Sort"
+:
+"Selection Sort";
+
+let steps=
+algo==="Bubble Sort"
+?
+bubbleSteps(ai)
+:
+selectionSteps(ai);
+
+let pointer=0;
+let gameOver=false;
+
+document.getElementById("game").innerHTML=`
+
+<div class="panel">
+
+<h2>🤖 Race Against AI</h2>
+
+<h3>AI Algorithm: ${algo}</h3>
+
+<div style="
+display:flex;
+justify-content:space-around;
+flex-wrap:wrap;
+">
+
+<div>
+<h3>Player</h3>
+<div id="playerArray" class="array"></div>
+</div>
+
+<div>
+<h3>AI</h3>
+<div id="aiArray" class="array"></div>
+</div>
+
+</div>
+
+<div id="raceResult"></div>
+
+<button class="actionBtn"
+onclick="startRace()">
+Restart
+</button>
+
+</div>
+`;
+
+function draw(){
+
+renderArray(
+"playerArray",
+player,
+playerMove,
+selected
+);
+
+const aiDiv=
+document.getElementById("aiArray");
+
+aiDiv.innerHTML="";
+
+ai.forEach(n=>{
+
+const d=document.createElement("div");
+
+d.className="box ai";
+
+d.innerText=n;
+
+aiDiv.appendChild(d);
+
+});
+
+}
+
+function playerMove(index){
+
+if(gameOver) return;
+
+selected.push(index);
+
+if(selected.length===2){
+
+let a=selected[0];
+let b=selected[1];
+
+[player[a],player[b]]
+=
+[player[b],player[a]];
+
+selected=[];
+
+draw();
+
+if(isSorted(player)){
+
+gameOver=true;
+
+clearInterval(aiTimer);
+
+document.getElementById(
+"raceResult"
+).innerHTML=
+'<h2 class="win">🎉 YOU WIN</h2>';
+
+}
+
+}else{
+draw();
+}
+
+}
+
+const aiTimer=setInterval(()=>{
+
+if(gameOver) return;
+
+if(pointer<steps.length){
+
+ai=[...steps[pointer++]];
+
+draw();
+
+}else{
+
+gameOver=true;
+
+clearInterval(aiTimer);
+
+document.getElementById(
+"raceResult"
+).innerHTML=
+'<h2 class="lose">🤖 AI WINS</h2>';
+
+}
+
+},700);
+
+draw();
+}
+
+/* ===========================
+MODE 3
+=========================== */
+
+function countBubble(arr){
+
+return bubbleSteps(arr).length;
+
+}
+
+function countSelection(arr){
+
+return selectionSteps(arr).length;
+
+}
+
+function startChoose(){
+
+const data=randomArray(7);
+
+const bubble=countBubble(data);
+const selection=countSelection(data);
+
+const answer=
+selection<=bubble
+?
+"selection"
+:
+"bubble";
+
+document.getElementById("game").innerHTML=`
+
+<div class="panel">
+
+<h2>🧠 Choose Algorithm</h2>
+
+<p>
+เลือกว่า Algorithm ไหน
+จะใช้จำนวน Swap น้อยกว่า
+</p>
+
+<div id="quizArray" class="array"></div>
+
+<button class="actionBtn"
+onclick="checkAnswer('bubble')">
+Bubble Sort
+</button>
+
+<button class="actionBtn"
+onclick="checkAnswer('selection')">
+Selection Sort
+</button>
+
+<div id="quizResult"></div>
+
+</div>
+`;
+
+renderArray(
+"quizArray",
+data
+);
+
+window.checkAnswer=function(choice){
+
+let result="";
+
+if(choice===answer){
+
+result=`
+<h2 class="win">
+✅ Correct
+</h2>
+`;
+
+}else{
+
+result=`
+<h2 class="lose">
+❌ Wrong
+</h2>
+`;
+
+}
+
+result+=`
+<p>Bubble Swaps: ${bubble}</p>
+<p>Selection Swaps: ${selection}</p>
+`;
+
+document.getElementById(
+"quizResult"
+).innerHTML=result;
+
+};
+
+}
+
+</script>
+
+</body>
+</html>
